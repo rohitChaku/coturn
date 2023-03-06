@@ -4619,35 +4619,50 @@ int open_client_connection_session(turn_turnserver *server, struct socket_messag
 static void peer_input_handler(ioa_socket_handle s, int event_type, ioa_net_data *in_buffer, void *arg,
                                int can_resume) {
 
-  if (!(event_type & IOA_EV_READ) || !arg)
+  if (!(event_type & IOA_EV_READ) || !arg) {
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Return 1");
     return;
+  }
 
-  if (in_buffer->recv_ttl == 0)
+  if (in_buffer->recv_ttl == 0) {
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Return 2");
     return;
+  }
 
   UNUSED_ARG(can_resume);
 
-  if (!s || ioa_socket_tobeclosed(s))
+  if (!s || ioa_socket_tobeclosed(s)) {
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Return 3");
     return;
+  }
 
   ts_ur_super_session *ss = (ts_ur_super_session *)arg;
 
-  if (!ss)
+  if (!ss) {
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Return 4");
     return;
+  }
 
-  if (ss->to_be_closed)
+  if (ss->to_be_closed) {
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Return 5");
     return;
+  }
 
-  if (!(ss->client_socket) || ioa_socket_tobeclosed(ss->client_socket))
+  if (!(ss->client_socket) || ioa_socket_tobeclosed(ss->client_socket)) {
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Return 6");
     return;
+  }
 
   turn_turnserver *server = (turn_turnserver *)(ss->server);
 
-  if (!server)
+  if (!server) {
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Return 7");
     return;
+  }
 
   relay_endpoint_session *elem = get_relay_session_ss(ss, get_ioa_socket_address_family(s));
   if (elem->s == NULL) {
+    TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Return 8");
     return;
   }
 
@@ -4672,6 +4687,7 @@ static void peer_input_handler(ioa_socket_handle s, int event_type, ioa_net_data
       if (tinfo) {
         chnum = get_turn_channel_number(tinfo, &(in_buffer->src_addr));
       } else if (!(server->server_relay)) {
+        TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "Return 9");
         return;
       }
 
